@@ -11,7 +11,7 @@ $(document).ready(function() {
 
 function getApiAndToken() {
     //make an Ajax Request to get the apiKey, sessionId and token from the server
-    $.get(SAMPLE_SERVER_BASE_URL + "/session", function(res) {
+    $.get(SAMPLE_SERVER_BASE_URL + '/session', function(res) {
 
         apiKey = res.apiKey;
         sessionId = res.sessionId;
@@ -38,7 +38,7 @@ function initializeSession() {
 
     //Handler for sessionDisconnected event
     session.on('sessionDisconnected', function(event) {
-        console.log("The session got disconnected", event.reason);
+        console.log('You were disconnected from the session.', event.reason);
     });
 
     //Connect to the Session
@@ -54,7 +54,7 @@ function initializeSession() {
             session.publish(publisher);
 
         } else {
-            console.log("There was an error connecting to the session", error.code, error.message);
+            console.log('There was an error connecting to the session:', error.code, error.message);
         }
 
     });
