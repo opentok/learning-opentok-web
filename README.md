@@ -50,6 +50,12 @@ this to the following
 
    http://localhost:8080
 
+5. The web app lives at index.html. You will need to run this in a web server. If you have Python on your
+system you can start the web server by running `python -m SimpleHTTPServer 8000` in the `web` folder.
+
+6.Once you have the server running open up index.html in two browser tabs and you should be able to see
+yourself and video chat with yourself.
+
 # Getting an OpenTok session ID, token, and API key
 
 An OpenTok session connects different clients letting them share audio-video streams and send
@@ -101,7 +107,7 @@ Upon obtaining the session ID, token, and API, the `getApiAndToken()` method cal
 `initializeSession()` method. This method initializes an OTSession object and connects to the
 OpenTok session:
 
-    //Initialize Session Object
+    // Initialize Session Object
     var session = OT.initSession(apiKey, sessionId);
 
 The `OT.initSession()` method takes two parameters -- the OpenTok API key and the session ID. It
@@ -112,10 +118,10 @@ session. You must connect before sending or receiving audio-video streams in the
 interacting with the session in any way). The `connect()` method takes two parameters -- a token
 and a completion handler function:
 
-    //Connect to the Session
+    // Connect to the Session
     session.connect(token, function(error) {
 
-        //If the connection is successful, initialize a publisher and publish to the session
+        // If the connection is successful, initialize a publisher and publish to the session
         if (!error) {
             var publisher = OT.initPublisher('publisher', {
                 insertMode: 'append',
@@ -127,7 +133,7 @@ and a completion handler function:
 
         } else {
 
-            console.log('There was an error connecting to the session:', error.code, error.message);
+            console.log('You were disconnected from the session.', error.code, error.message);
         }
 
     });
@@ -172,7 +178,7 @@ connect. This event is defined by the StreamEvent, which has a `stream` property
 stream that was created. The application listens to the `streamCreated` event and subscribes to all
 streams created in the session using the `Session.subscribe()` method, as shown below:
 
-    //Subscribe to a newly created stream
+    // Subscribe to a newly created stream
    
     session.on('streamCreated', function(event) {
         session.subscribe(event.stream, 'subscriber', {
@@ -212,9 +218,9 @@ As soon as the `startArchive()` method is called, the Start Recording button is 
 Recording button is displayed.
 
     function startArchive() {
-        $.post(SAMPLE_SERVER_BASE_URL + "/start/" + sessionId);
-        $("#start").hide();
-        $("#stop").show();
+        $.post(SAMPLE_SERVER_BASE_URL + '/start/' + sessionId);
+        $('#start').hide();
+        $('#stop').show();
     }
 
 To stop the recording, the user clicks the Stop Recording button, which invokes the `stopArchive()`
@@ -224,10 +230,10 @@ the archive that needs to be stopped as a URL parameter instead of the sessionId
 Recording button is hidden and the View Archive button is enabled.
 
     function stopArchive() {
-        $.post(SAMPLE_SERVER_BASE_URL + "/stop/" + archiveID);
-        $("#stop").hide();
-        $("#start").show();
-        $("#view").prop('disabled', false);
+        $.post(SAMPLE_SERVER_BASE_URL + '/stop/' + archiveID);
+        $('#stop').hide();
+        $('#start').show();
+        $('#view').prop('disabled', false);
     }
 
 To download the archive that has just been recorded, the user clicks View Archive button which

@@ -1,16 +1,16 @@
-//Declare Variables
+// Declare Variables
 var apiKey,
     sessionId,
     token;
 
-//get the APIKEY and TOKEN 
+// get the APIKEY and TOKEN 
 $(document).ready(function() {
     getApiAndToken();
 });
 
 
 function getApiAndToken() {
-    //make an Ajax Request to get the apiKey, sessionId and token from the server
+    // make an Ajax Request to get the apiKey, sessionId and token from the server
     $.get(SAMPLE_SERVER_BASE_URL + '/session', function(res) {
 
         apiKey = res.apiKey;
@@ -24,10 +24,10 @@ function getApiAndToken() {
 
 
 function initializeSession() {
-    //Initialize Session Object
+    // Initialize Session Object
     var session = OT.initSession(apiKey, sessionId);
 
-    //Subscribe to a newly created stream
+    // Subscribe to a newly created stream
     session.on('streamCreated', function(event) {
         session.subscribe(event.stream, 'subscriber', {
             insertMode: 'append',
@@ -36,14 +36,14 @@ function initializeSession() {
         });
     });
 
-    //Handler for sessionDisconnected event
+    // Handler for sessionDisconnected event
     session.on('sessionDisconnected', function(event) {
         console.log('You were disconnected from the session.', event.reason);
     });
 
-    //Connect to the Session
+    // Connect to the Session
     session.connect(token, function(error) {
-        //If the connection is successful, initialize a publisher and publish to the session
+        // If the connection is successful, initialize a publisher and publish to the session
         if (!error) {
             var publisher = OT.initPublisher('publisher', {
                 insertMode: 'append',
