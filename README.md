@@ -53,8 +53,9 @@ this to the following
 5. The web app lives at index.html. You will need to run this in a web server. If you have Python on your
 system you can start the web server by running `python -m SimpleHTTPServer 8000` in the `web` folder.
 
-6.Once you have the server running open up index.html in two browser tabs and you should be able to see
+6. Once you have the server running open up index.html in two browser tabs and you should be able to see
 yourself and video chat with yourself.
+
 
 # Getting an OpenTok session ID, token, and API key
 
@@ -133,7 +134,7 @@ and a completion handler function:
 
         } else {
 
-            console.log('You were disconnected from the session.', error.code, error.message);
+            console.log('There was an error connecting to the session:', error.code, error.message);
         }
 
     });
