@@ -1,4 +1,4 @@
-# OpenTok JS SDK Getting Started Sample App
+# Learning OpenTok Web
 
 
 This sample client app shows how to accomplish the following using the OpenTok.js SDK:
@@ -17,20 +17,21 @@ The code for this sample is found the following git branches:
 
 You will also need to clone the OpenTok GettingStarted repo and run its code on a PHP-enabled web server. See the next section for more information.
 
-# Setting up the test web service
+## Setting up the test web service
 
-The GettingStarted repo includes code for setting up a web service that handles the following API calls:
+The [Learning OpenTok PHP](https://github.com/opentok/learning-opentok-php) repo includes code for
+setting up a web service that handles the following API calls:
 
 * "/session" -- The JS client calls this endpoint to get an OpenTok session ID, token, and API key.
 * "/start" -- The JS client calls this endpoint to start recording the OpenTok session to an archive.
 * "/stop" -- The JS client calls this endpoint to stop recording the archive.
 * "/view" -- The JS client loads this endpoint in a web browser to display the archive recording.
 
-Clone the [Getting Started repo](https://github.com/opentok/GettingStarted.git) and follow the
-instructions listed under the `Installation` section of the README file. Once that is done, proceed
-to the next section.
+Download the repo and run its code on a PHP-enabled web server. If you do not have a PHP
+server set up, you can use Heroku to run a remote test server -- see [Automatic deployment to
+Heroku](https://github.com/opentok/learning-opentok-php#automatic-deployment-to-heroku).
 
-# Configuring the application
+## Configuring the application
 
 1. Clone this repository. This repository as mentioned earlier has three branches.
 
@@ -57,7 +58,7 @@ system you can start the web server by running `python -m SimpleHTTPServer 8000`
 yourself and video chat with yourself.
 
 
-# Getting an OpenTok session ID, token, and API key
+## Getting an OpenTok session ID, token, and API key
 
 An OpenTok session connects different clients letting them share audio-video streams and send
 messages. Clients in the same session can include iOS, Android, and web browsers.
@@ -102,7 +103,7 @@ JSON data:
          "token": "T1==cGFydG5lcl9pZD00jg="
     }
 
-# Connecting to the session
+## Connecting to the session
 
 Upon obtaining the session ID, token, and API, the `getApiAndToken()` method calls the
 `initializeSession()` method. This method initializes a Session object and connects to the
@@ -144,7 +145,7 @@ The session object dispatches a `streamCreated` event when a new stream is creat
 It dispatches a `sessionDisconnected` event when your client disconnects from the session. The
 application defines event handlers to listen to these two events.
 
-# Publishing an audio video stream to the session
+## Publishing an audio video stream to the session
 
 Upon successfully connecting to the OpenTok session (see the previous section), the application
 initializes an OpenTok Publisher object and publishes an audio-video stream to the session. This is
@@ -167,7 +168,7 @@ method of the Session object:
 
     session.publish(publisher);
 
-# Subscribing to another client's audio-video stream
+## Subscribing to another client's audio-video stream
 
 The Session object dispatches a `streamCreated` event when a new stream (other than your own) is
 created in a session. A stream is created when a client publishes to the session. The
@@ -195,7 +196,7 @@ The subscribe method takes four parameters:
 * The completion handler function (optional) that is called when the `subscribe()` method completes
   successfully or fails
 
-# Recording the session to an archive
+## Recording the session to an archive
 
 **Important**: To view the code for this functionality, switch to the *archiving* branch of this
 git repository.
@@ -241,7 +242,7 @@ logic to check if the archive is available for download or not. If it is availab
 is redirected to the archive page. If not, a new page is loaded which continuously checks whether
 the archive is available for download or not and loads it when it is available.
 
-# Using the signaling API to implement text chat
+## Using the signaling API to implement text chat
 
 **Important**: To view the code for this functionality, switch to the *signaling* branch of this
 git repository.
@@ -276,11 +277,11 @@ When another client connected to the session (in this app, there is only one) se
 session's `signal` event handler is invoked:
 
     session.on('signal:chat', function(event) {
-        var msg = document.createElement('p');
-        msg.innerHTML = event.data;
-        msg.className = event.from.connectionId === session.connection.connectionId ? 'mine' : 'theirs';
-        msgHistory.appendChild(msg);
-        msg.scrollIntoView();
+      var msg = document.createElement('p');
+      msg.innerHTML = event.data;
+      msg.className = event.from.connectionId === session.connection.connectionId ? 'mine' : 'theirs';
+      msgHistory.appendChild(msg);
+      msg.scrollIntoView();
     });
 This method checks to see if the signal was sent by the local web client or by the other client
 connected to the session:
@@ -298,7 +299,7 @@ The data associated with the event is then appended as a child of the `history` 
 This app uses the OpenTok signaling API to implement text chat. However, you can use the signaling
 API to send messages to other clients (individually or collectively) connected to the session.
 
-# Other resources
+## Other resources
 
 See the following:
 
