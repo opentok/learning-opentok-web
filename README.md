@@ -39,23 +39,42 @@ Heroku](https://github.com/opentok/learning-opentok-php#automatic-deployment-to-
 to execute the following commands:
 
         git fetch
-        git checkout signaling origin/signaling
+        git checkout -b signaling origin/signaling
 
-        git checkout archiving origin/archiving
+        git checkout -b archiving origin/archiving
 
 3. Now, switch to `basics` branch using `git checkout basics` command. Navigate to `web/js`
-directory and rename the sampleconfig.js file to config.js.
+directory and make a copy of the sampleconfig.js file named config.js.
 
-4. Edit the file and define the variable SAMPLE_SERVER_BASE_URL. For our test web service, set
-this to the following
+4. Edit the config.js file and set the value for SAMPLE_SERVER_BASE_URL.
 
-   http://localhost:8080
+   If you deployed a the test web service to a local PHP server, set this to the following:
 
-5. The web app lives at index.html. You will need to run this in a web server. If you have Python on your
-system you can start the web server by running `python -m SimpleHTTPServer 8000` in the `web` folder.
+        var SAMPLE_SERVER_BASE_URL = 'http://localhost:8080';
 
-6. Once you have the server running open up index.html in two browser tabs and you should be able to see
-yourself and video chat with yourself.
+   If you deployed this to Heroku, set this to the following:
+
+        var SAMPLE_SERVER_BASE_URL = 'https://YOUR-HEROKU-APP-URL';
+
+   Do not add the trailing slash of the URL.
+
+5. The web app lives at index.html. You will need to run this on a web server. If you have Python on
+your system, you can start the web server by running `python -m SimpleHTTPServer 8000` in the `web` folder.
+
+6. Once you have the server running open the index.html in a supported browser. For example, if
+your local web server is running on port 8000, load the following URL:
+
+   http://localhost:8000
+
+   The OpenTok.js library is supported in Chrome, Firefox, and Internet Explorer 9 - 11.
+   (Internet Explorer requires installation of the OpenTok plugin, which the libary asks you
+   to install, if you haven't already.)
+
+7. When prompted, grand the page access to your camera and microphone.
+
+8. Mute the speaker on your computer, and then load the page again in another browser tab.
+
+   You will see a person-to-person video chat session using OpenTok.
 
 
 ## Getting an OpenTok session ID, token, and API key
@@ -283,10 +302,11 @@ session's `signal` event handler is invoked:
       msgHistory.appendChild(msg);
       msg.scrollIntoView();
     });
+
 This method checks to see if the signal was sent by the local web client or by the other client
 connected to the session:
 
-        event.from.connectionId === session.connection.connectionId ? 'mine' : 'theirs';
+    event.from.connectionId === session.connection.connectionId ? 'mine' : 'theirs';
 
 The Session object represents your OpenTok session. It has a `connection` property, which has a
 `connectionId` property. The event object represents the event associated with this signal. It has
@@ -303,6 +323,7 @@ API to send messages to other clients (individually or collectively) connected t
 
 See the following:
 
-* [API reference](https://tokbox.com/opentok/libraries/client/js/) -- Provides details on the API's available in the OpenTok JavaScript client library
+* [API reference](https://tokbox.com/developer/sdks/js/reference/) -- Provides details on
+the OpenTok.js API
 
-* [Tutorials](https://tokbox.com/opentok/tutorials/) -- Includes conceptual information and code samples for all OpenTok features     
+* [Developer guides](https://tokbox.com/developer/guides/) -- Includes conceptual information and code samples for all OpenTok features
