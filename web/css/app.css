@@ -6,8 +6,7 @@ body, html {
     position: relative;
     width: 100%;
     height: 100%;
-    margin-left: auto;
-    margin-right: auto;
+    float: left;
 }
 #subscriber {
     position: absolute;
@@ -15,15 +14,25 @@ body, html {
     top: 0;
     width: 100%;
     height: 100%;
+    margin-left: 50px;
     z-index: 10;
 }
 #publisher {
     position: absolute;
     width: 360px;
     height: 240px;
-    bottom: 10px;
+    bottom: 30px;
     left: 10px;
     z-index: 100;
     border: 3px solid white;
     border-radius: 3px;
+}
+#buttonholder{
+    position: absolute;
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    bottom: 2px;
+    left: 20px;
+    z-index: 200;
 }
