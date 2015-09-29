@@ -46,6 +46,16 @@ function initializeSession() {
       console.log('There was an error connecting to the session: ', error.code, error.message);
     }
   });
+
+  // Receive a message and append it to the history
+  var msgHistory = document.querySelector('#history');
+  session.on('signal:msg', function(event) {
+    var msg = document.createElement('p');
+    msg.innerHTML = event.data;
+    msg.className = event.from.connectionId === session.connection.connectionId ? 'mine' : 'theirs';
+    msgHistory.appendChild(msg);
+    msg.scrollIntoView();
+  });
 }
 
 // Text chat
