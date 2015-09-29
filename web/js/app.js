@@ -1,6 +1,8 @@
 var apiKey,
+    session,
     sessionId,
-    token;
+    token,
+    response;
 
 $(document).ready(function() {
   // Make an Ajax request to get the OpenTok API key, session ID, and token from the server
@@ -14,7 +16,7 @@ $(document).ready(function() {
 });
 
 function initializeSession() {
-  var session = OT.initSession(apiKey, sessionId);
+  session = OT.initSession(apiKey, sessionId);
 
   // Subscribe to a newly created stream
   session.on('streamCreated', function(event) {
@@ -45,3 +47,21 @@ function initializeSession() {
     }
   });
 }
+
+// Text chat
+var form = document.querySelector('form');
+var msgTxt = document.querySelector('#msgTxt');
+
+// Send a signal once the user enters data in the form
+form.addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  session.signal({
+      type: 'msg',
+      data: msgTxt.value
+    }, function(error) {
+      if (!error) {
+        msgTxt.value = '';
+      }
+    });
+});
