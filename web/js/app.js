@@ -51,7 +51,7 @@ function initializeSession() {
   var msgHistory = document.querySelector('#history');
   session.on('signal:msg', function(event) {
     var msg = document.createElement('p');
-    msg.innerHTML = event.data;
+    msg.innerText = event.data;
     msg.className = event.from.connectionId === session.connection.connectionId ? 'mine' : 'theirs';
     msgHistory.appendChild(msg);
     msg.scrollIntoView();
