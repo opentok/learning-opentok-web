@@ -297,7 +297,7 @@ session's `signal` event handler is invoked:
 
     session.on('signal:chat', function(event) {
       var msg = document.createElement('p');
-      msg.innerText = event.data;
+      msg.textContent = event.data;
       msg.className = event.from.connectionId === session.connection.connectionId ? 'mine' : 'theirs';
       msgHistory.appendChild(msg);
       msg.scrollIntoView();
