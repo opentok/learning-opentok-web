@@ -1,0 +1,10 @@
+name: Learning OpenTok Web
+author: TokBox, Inc.
+website: https://tokbox.com
+tags:
+ - tutorial
+description: This sample app shows how to accomplish basic tasks using the OpenTok iOS SDK.
+image: https://static.opentok.com/img/styleguide/tokbox-logo-bug.png
+platforms:
+ - JS
+ 
