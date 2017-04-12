@@ -176,7 +176,7 @@ client fails to connect to the OpenTok session. Otherwise, no error object is pa
 that the client connected successfully to the session.
 
 The Session object dispatches a `sessionDisconnected` event when your client disconnects from the
-session. The application defines an event handler to listen to this event:
+session. The application defines an event handler for this event:
 
     session.on('sessionDisconnected', function(event) {
       console.log('You were disconnected from the session.', event.reason);
@@ -189,25 +189,27 @@ initializes an OpenTok Publisher object and publishes an audio-video stream to t
 done inside the completion handler for the connect() method, since you should only publish to the
 session once you are connected to it.
 
-The Publisher object is initialized as shown below. The `OT.initPublisher() method` takes three
+The Publisher object is initialized as shown below. The `OT.initPublisher()` method takes three
 optional parameters:
 
 * The target DOM element or DOM element ID for placement of the publisher video
 * The properties of the publisher
 * The completion handler
 
-    var publisherOptions = {
-      insertMode: 'append',
-      width: '100%',
-      height: '100%'
-    };
-    var publisher = OT.initPublisher('publisher', publisherOptions, function(error) {
-      if (error) {
-        console.log('There was an error initializing the publisher: ', error.name, error.message);
-        return;
-      }
-      session.publish(publisher);
-    });
+```
+var publisherOptions = {
+  insertMode: 'append',
+  width: '100%',
+  height: '100%'
+};
+var publisher = OT.initPublisher('publisher', publisherOptions, function(error) {
+  if (error) {
+    console.log('There was an error initializing the publisher: ', error.name, error.message);
+    return;
+  }
+  session.publish(publisher);
+});
+```
 
 Once the Publisher object is initialized, we publish to the session using the `publish()`
 method of the Session object:
@@ -316,27 +318,28 @@ Text chat is implemented using the OpenTok signaling API. A signal is sent using
 method of the Session object. To receive a signal a client needs to listen to the `signal` event
 dispatched by the session object.
 
-In our application, when the user enters text in the input text field, the form.addEventListener
-method is called:
+In our application, when the user enters text in the input text field, the following code is
+executed:
 
     form.addEventListener('submit', function(event) {
-    event.preventDefault();
+      event.preventDefault();
 
       session.signal({
           type: 'msg',
           data: msgTxt.value
         }, function(error) {
-        if (error) {
-          console.log('Error sending signal:', error.name, error.message);
-        } else {
-          msgTxt.value = '';
-        }
+          if (error) {
+            console.log('Error sending signal:', error.name, error.message);
+          } else {
+            msgTxt.value = '';
+          }
+        });
       });
     });
 
 This method calls the `signal()` method of the Session object, which sends a signal to all clients
 connected to the OpenTok session. Each signal is defined by a `type` property identifying the type
-of message (in this case "msg") and a `data` property containing the message. The text entered is
+of message (in this case `"msg"`) and a `data` property containing the message. The text entered is
 sent in the data property of the signal method.
 
 When another client connected to the session (in this app, there is only one) sends a message, the
