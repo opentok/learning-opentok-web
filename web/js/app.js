@@ -18,10 +18,15 @@ function initializeSession() {
 
   // Subscribe to a newly created stream
   session.on('streamCreated', function(event) {
-    session.subscribe(event.stream, 'subscriber', {
+    var subscriberOptions = {
       insertMode: 'append',
       width: '100%',
       height: '100%'
+    };
+    session.subscribe(event.stream, 'subscriber', subscriberOptions, function(error) {
+      if (error) {
+        console.log('There was an error publishing: ', error.name, error.message);
+      }
     });
   });
 
@@ -33,15 +38,24 @@ function initializeSession() {
   session.connect(token, function(error) {
     // If the connection is successful, initialize a publisher and publish to the session
     if (!error) {
-      var publisher = OT.initPublisher('publisher', {
+      var publisherOptions = {
         insertMode: 'append',
         width: '100%',
         height: '100%'
+      };
+      var publisher = OT.initPublisher('publisher', publisherOptions, function(error) {
+        if (error) {
+          console.log('There was an error initializing the publisher: ', error.name, error.message);
+          return;
+        }
+        session.publish(publisher, function(error) {
+          if (error) {
+            console.log('There was an error publishing: ', error.name, error.message);
+          }
+        });
       });
-
-      session.publish(publisher);
     } else {
-      console.log('There was an error connecting to the session: ', error.code, error.message);
+      console.log('There was an error connecting to the session: ', error.name, error.message);
     }
   });
 }
