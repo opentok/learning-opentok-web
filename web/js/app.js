@@ -84,7 +84,9 @@ form.addEventListener('submit', function(event) {
       type: 'msg',
       data: msgTxt.value
     }, function(error) {
-      if (!error) {
+      if (error) {
+        console.log('Error sending signal:', error.name, error.message);
+      } else {
         msgTxt.value = '';
       }
     });
