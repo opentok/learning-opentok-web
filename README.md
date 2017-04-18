@@ -56,7 +56,7 @@ directory and make a copy of the sampleconfig.js file named config.js.
 
         var SAMPLE_SERVER_BASE_URL = 'https://YOUR-HEROKU-APP-URL';
 
-   Do not add the trailing slash of the URL.
+   *Do not add the trailing slash of the URL.*
 
 5. The web app lives at index.html. You will need to run this on a web server. If you have Python on
 your system, you can start the web server by running `python -m SimpleHTTPServer 8000` in the `web` folder.
@@ -164,7 +164,11 @@ and a completion handler function:
             console.log('There was an error initilizing the publisher: ', error.name, error.message);
             return;
           }
-          session.publish(publisher);
+          session.publish(publisher, function(error) {
+            if (error) {
+              console.log('There was an error publishing: ', error.name, error.message);
+            }
+          });
         });
       } else {
         console.log('There was an error connecting to the session:', error.name, error.message);
@@ -207,7 +211,11 @@ var publisher = OT.initPublisher('publisher', publisherOptions, function(error) 
     console.log('There was an error initializing the publisher: ', error.name, error.message);
     return;
   }
-  session.publish(publisher);
+  session.publish(publisher, function(error) {
+    if (error) {
+      console.log('There was an error publishing: ', error.name, error.message);
+    }
+  });
 });
 ```
 
