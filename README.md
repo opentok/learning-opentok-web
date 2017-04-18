@@ -56,7 +56,7 @@ directory and make a copy of the sampleconfig.js file named config.js.
 
         var SAMPLE_SERVER_BASE_URL = 'https://YOUR-HEROKU-APP-URL';
 
-   Do not add the trailing slash of the URL.
+   ***Do not add the trailing slash of the URL.***
 
 5. The web app lives at index.html. You will need to run this on a web server. If you have Python on
 your system, you can start the web server by running `python -m SimpleHTTPServer 8000` in the `web` folder.
@@ -66,7 +66,7 @@ your local web server is running on port 8000, load the following URL:
 
    http://localhost:8000
 
-   The OpenTok.js library is supported in Chrome, Firefox, and Internet Explorer 9 - 11.
+   The OpenTok.js library is supported in Chrome, Firefox, and Internet Explorer 10 - 11.
    (Internet Explorer requires installation of the OpenTok plugin, which the libary asks you
    to install, if you haven't already.)
 
@@ -75,7 +75,6 @@ your local web server is running on port 8000, load the following URL:
 8. Mute the speaker on your computer, and then load the page again in another browser tab.
 
    You will see a person-to-person video chat session using OpenTok.
-
 
 ## Getting an OpenTok session ID, token, and API key
 
@@ -111,7 +110,19 @@ overview](https://tokbox.com/opentok/tutorials/create-token/).
 
 **API key** -- The API key identifies your OpenTok developer account.
 
-Upon starting up, the application calls the `getApiAndToken()` method defined in the app.js file.
+Upon starting up, the application executes the following code in the app.js file:
+
+    $(document).ready(function() {
+      // Make an Ajax request to get the OpenTok API key, session ID, and token from the server
+      $.get(SAMPLE_SERVER_BASE_URL + '/session', function(res) {
+        apiKey = res.apiKey;
+        sessionId = res.sessionId;
+        token = res.token;
+
+        initializeSession();
+      });
+    });
+
 This method makes an XHR (or Ajax request) to the "/session" endpoint of the web service. The web
 service returns an HTTP response that includes the session ID, the token, and API key formatted as
 JSON data:
@@ -124,9 +135,8 @@ JSON data:
 
 ## Connecting to the session
 
-Upon obtaining the session ID, token, and API, the `getApiAndToken()` method calls the
-`initializeSession()` method. This method initializes a Session object and connects to the
-OpenTok session:
+Upon obtaining the session ID, token, and API, the app calls the `initializeSession()` method.
+First, this method initializes a Session object:
 
     // Initialize Session Object
     var session = OT.initSession(apiKey, sessionId);
@@ -144,25 +154,37 @@ and a completion handler function:
 
       // If the connection is successful, initialize a publisher and publish to the session
       if (!error) {
-        var publisher = OT.initPublisher('publisher', {
+        var publisherOptions = {
           insertMode: 'append',
           width: '100%',
           height: '100%'
+        };
+        var publisher = OT.initPublisher('publisher', publisherOptions, function(error) {
+          if (error) {
+            console.log('There was an error initilizing the publisher: ', error.name, error.message);
+            return;
+          }
+          session.publish(publisher, function(error) {
+            if (error) {
+              console.log('There was an error publishing: ', error.name, error.message);
+            }
+          });
         });
-
-        session.publish(publisher);
       } else {
-        console.log('There was an error connecting to the session:', error.code, error.message);
+        console.log('There was an error connecting to the session:', error.name, error.message);
       }
     });
 
-An error object is passed into the completion handler of the connect event if the client fails to
-connect to the OpenTok session. Otherwise, no error object is passed in, indicating that the client
-connected successfully to the session.
+An error object is passed into the completion handler of the `Session.connect()` method if the
+client fails to connect to the OpenTok session. Otherwise, no error object is passed in, indicating
+that the client connected successfully to the session.
 
-The session object dispatches a `streamCreated` event when a new stream is created in the session.
-It dispatches a `sessionDisconnected` event when your client disconnects from the session. The
-application defines event handlers to listen to these two events.
+The Session object dispatches a `sessionDisconnected` event when your client disconnects from the
+session. The application defines an event handler for this event:
+
+    session.on('sessionDisconnected', function(event) {
+      console.log('You were disconnected from the session.', event.reason);
+    });
 
 ## Publishing an audio video stream to the session
 
@@ -171,16 +193,31 @@ initializes an OpenTok Publisher object and publishes an audio-video stream to t
 done inside the completion handler for the connect() method, since you should only publish to the
 session once you are connected to it.
 
-The Publisher object is initialized as shown below. It takes three optional parameters (two of
-which are shown in the code below). The first parameter is the DOM element that the publisher video
-replaces. The second parameter specifies the properties of the publisher. The third parameter (not
-shown) specifies the completion handler.
+The Publisher object is initialized as shown below. The `OT.initPublisher()` method takes three
+optional parameters:
 
-    var publisher = OT.initPublisher('publisher', {
-      insertMode: 'append',
-      width: '100%',
-      height: '100%'
-    });
+* The target DOM element or DOM element ID for placement of the publisher video
+* The properties of the publisher
+* The completion handler
+
+```
+var publisherOptions = {
+  insertMode: 'append',
+  width: '100%',
+  height: '100%'
+};
+var publisher = OT.initPublisher('publisher', publisherOptions, function(error) {
+  if (error) {
+    console.log('There was an error initializing the publisher: ', error.name, error.message);
+    return;
+  }
+  session.publish(publisher, function(error) {
+    if (error) {
+      console.log('There was an error publishing: ', error.name, error.message);
+    }
+  });
+});
+```
 
 Once the Publisher object is initialized, we publish to the session using the `publish()`
 method of the Session object:
@@ -193,26 +230,30 @@ The Session object dispatches a `streamCreated` event when a new stream (other t
 created in a session. A stream is created when a client publishes to the session. The
 `streamCreated` event is also dispatched for each existing stream in the session when you first
 connect. This event is defined by the StreamEvent object, which has a `stream` property,
-representing stream that was created. The application listens to the `streamCreated` event and
-subscribes to all streams created in the session using the `Session.subscribe()` method, as shown
-below:
+representing stream that was created. The application adds an event listener for the
+`streamCreated` event and subscribes to all streams created in the session using the
+`Session.subscribe()` method:
 
     // Subscribe to a newly created stream
-   
     session.on('streamCreated', function(event) {
-      session.subscribe(event.stream, 'subscriber', {
+      var subscriberOptions = {
         insertMode: 'append',
         width: '100%',
         height: '100%'
+      };
+      session.subscribe(event.stream, 'subscriber', subscriberOptions, function(error) {
+        if (error) {
+          console.log('There was an error publishing: ', error.name, error.message);
+        }
       });
     });
 
-The subscribe method takes four parameters:
+The `Session.subscribe()` method takes four parameters:
 
 * The Stream object to which we are subscribing
-* The DOM element or DOM element ID (optional) that the subscriber video replaces
+* The target DOM element or DOM element ID (optional) for placement of the subscriber video
 * A set of properties (optional) that customize the appearance of the subscriber view
-* The completion handler function (optional) that is called when the `subscribe()` method completes
+* The completion handler function (optional) that is called when the method completes
   successfully or fails
 
 ## Recording the session to an archive
@@ -221,11 +262,12 @@ The subscribe method takes four parameters:
 git repository.
 
 The OpenTok archiving API lets you record a session's audio-video streams to MP4 files. You use
-server-side code to start and stop archive recordings. In the config.js file, you set the `SAMPLE_SERVER_BASE_URL` variable to the base URL of the web service the app calls to start archive
-recording, stop recording, and play back the recorded video:
+server-side code to start and stop archive recordings. In the config.js file, you set the
+`SAMPLE_SERVER_BASE_URL` variable to the base URL of the web service the app calls to start archive
+recording, stop recording, and play back the recorded video.
 
 The archiving application uses the same code available in the basics branch to initialize an
-OpenTok session, connect to the session, publish a stream and subscribe to stream in the session.
+OpenTok session, connect to the session, publish a stream, and subscribe to stream in the session.
 If you have not already gotten familiar with the code in that branch, consider doing so before
 continuing (see the previous sections).
 
@@ -261,6 +303,20 @@ logic to check if the archive is available for download or not. If it is availab
 is redirected to the archive page. If not, a new page is loaded which continuously checks whether
 the archive is available for download or not and loads it when it is available.
 
+*Notes:*
+
+* In most applications, control of the archive recording would not be granted to each
+end-user.
+
+* You can have automatically archived sessions, which are recorded whenever a client
+starts publishing a stream.
+
+* You will want to set up an Amazon S3 or Microsoft Azure target
+for storage of your archive recordings.
+
+For more information, see the [OpenTok archiving developer
+guide](https://tokbox.com/developer/guides/archiving/).
+
 ## Using the signaling API to implement text chat
 
 **Important**: To view the code for this functionality, switch to the *signaling* branch of this
@@ -270,32 +326,34 @@ Text chat is implemented using the OpenTok signaling API. A signal is sent using
 method of the Session object. To receive a signal a client needs to listen to the `signal` event
 dispatched by the session object.
 
-In our application, when the user enters text in the input text field, the form.addEventListener
-method is called:
+In our application, when the user enters text in the input text field, the following code is
+executed:
 
     form.addEventListener('submit', function(event) {
-    event.preventDefault();
+      event.preventDefault();
 
       session.signal({
-          type: 'chat',
+          type: 'msg',
           data: msgTxt.value
         }, function(error) {
-        if (!error) {
-          msgTxt.value = '';
-        }
+          if (error) {
+            console.log('Error sending signal:', error.name, error.message);
+          } else {
+            msgTxt.value = '';
+          }
+        });
       });
     });
 
-
 This method calls the `signal()` method of the Session object, which sends a signal to all clients
 connected to the OpenTok session. Each signal is defined by a `type` property identifying the type
-of message (in this case "chat") and a `data` property containing the message. The text entered is
+of message (in this case `"msg"`) and a `data` property containing the message. The text entered is
 sent in the data property of the signal method.
 
 When another client connected to the session (in this app, there is only one) sends a message, the
 session's `signal` event handler is invoked:
 
-    session.on('signal:chat', function(event) {
+    session.on('signal:msg', function(event) {
       var msg = document.createElement('p');
       msg.innerHTML = event.data;
       msg.className = event.from.connectionId === session.connection.connectionId ? 'mine' : 'theirs';
