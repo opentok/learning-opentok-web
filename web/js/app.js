@@ -1,6 +1,8 @@
 var apiKey,
+    session,
     sessionId,
-    token;
+    token,
+    response;
 
 $(document).ready(function() {
   // Make an Ajax request to get the OpenTok API key, session ID, and token from the server
@@ -14,7 +16,7 @@ $(document).ready(function() {
 });
 
 function initializeSession() {
-  var session = OT.initSession(apiKey, sessionId);
+  session = OT.initSession(apiKey, sessionId);
 
   // Subscribe to a newly created stream
   session.on('streamCreated', function(event) {
@@ -58,4 +60,34 @@ function initializeSession() {
       console.log('There was an error connecting to the session: ', error.name, error.message);
     }
   });
+
+  // Receive a message and append it to the history
+  var msgHistory = document.querySelector('#history');
+  session.on('signal:msg', function(event) {
+    var msg = document.createElement('p');
+    msg.textContent = event.data;
+    msg.className = event.from.connectionId === session.connection.connectionId ? 'mine' : 'theirs';
+    msgHistory.appendChild(msg);
+    msg.scrollIntoView();
+  });
 }
+
+// Text chat
+var form = document.querySelector('form');
+var msgTxt = document.querySelector('#msgTxt');
+
+// Send a signal once the user enters data in the form
+form.addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  session.signal({
+      type: 'msg',
+      data: msgTxt.value
+    }, function(error) {
+      if (error) {
+        console.log('Error sending signal:', error.name, error.message);
+      } else {
+        msgTxt.value = '';
+      }
+    });
+});
