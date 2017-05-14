@@ -68,14 +68,14 @@ function initializeSession() {
 
 // Start recording
 function startArchive() {
-  $.post(SAMPLE_SERVER_BASE_URL + '/start/' + sessionId);
+  $.post(SAMPLE_SERVER_BASE_URL + '/session/' + sessionId + '/archive/start');
   $('#start').hide();
   $('#stop').show();
 }
 
 // Stop recording
 function stopArchive() {
-  $.post(SAMPLE_SERVER_BASE_URL + '/stop/' + archiveID);
+  $.post(SAMPLE_SERVER_BASE_URL + '/session/' + sessionId + '/archive/' + archiveID + '/stop');
   $('#stop').hide();
   $('#view').prop('disabled', false);
   $('#stop').show();
@@ -85,7 +85,15 @@ function stopArchive() {
 // every 5 secs until it is "available"
 function viewArchive() {
   $('#view').prop('disabled', true);
-  window.location = SAMPLE_SERVER_BASE_URL + '/view/' + archiveID;
+  // window.location = SAMPLE_SERVER_BASE_URL + '/view/' + archiveID;
+
+  $.get(SAMPLE_SERVER_BASE_URL + '/session/' + sessionId + '/archive/' + archiveID + '/view', function(res) {
+    const json = JSON.parse(res);
+    const archive = JSON.parse(json['archive']);
+    if (archive && archive['status'] == 'available') {
+      window.location = archive['url'];
+    }
+  });
 }
 
 $('#start').show();
