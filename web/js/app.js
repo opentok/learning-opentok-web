@@ -100,13 +100,13 @@ function stopArchive() {
 function viewArchive() {
   $('#view').prop('disabled', true);
   window.location = SAMPLE_SERVER_BASE_URL + '/session/' + sessionId + '/archive/' + archiveID + '/view';
+}
 
-  // $.get(SAMPLE_SERVER_BASE_URL + '/session/' + sessionId + '/archive/' + archiveID + '/view', function(res) {
-  //   const json = JSON.parse(res);
-  //   if (json && json['status'] == 'available') {
-  //     window.location = json['url'];
-  //   }
-  // });
+function printArchiveInfo() {
+  $.get(SAMPLE_SERVER_BASE_URL + '/session/' + sessionId + '/archive/' + archiveID + '/info', function(res) {
+    const json = JSON.parse(res);
+    consolo.log(json);
+  });
 }
 
 $('#start').show();
