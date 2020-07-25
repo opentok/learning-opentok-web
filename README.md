@@ -1,5 +1,6 @@
 # Learning OpenTok Web
 
+<img src="https://assets.tokbox.com/img/vonage/Vonage_VideoAPI_black.svg" height="48px" alt="Tokbox is now known as Vonage" />
 
 This sample client app shows how to accomplish the following using the OpenTok.js SDK:
 
@@ -377,11 +378,22 @@ The data associated with the event is then appended as a child of the `history` 
 This app uses the OpenTok signaling API to implement text chat. However, you can use the signaling
 API to send messages to other clients (individually or collectively) connected to the session.
 
-## Other resources
+## Development and Contributing
 
-See the following:
+Interested in contributing? We :heart: pull requests! See the [Contribution](CONTRIBUTING.md) guidelines.
 
-* [API reference](https://tokbox.com/developer/sdks/js/reference/) -- Provides details on
+## Getting Help
+
+We love to hear from you so if you have questions, comments or find a bug in the project, let us know! You can either:
+
+- Open an issue on this repository
+- See <https://support.tokbox.com/> for support options
+- Tweet at us! We're [@VonageDev](https://twitter.com/VonageDev) on Twitter
+- Or [join the Vonage Developer Community Slack](https://developer.nexmo.com/community/slack)
+
+## Further Reading
+
+- Check out the Developer Documentation at <https://tokbox.com/developer/>
+- [API reference](https://tokbox.com/developer/sdks/js/reference/) -- Provides details on
 the OpenTok.js API
-
-* [Developer guides](https://tokbox.com/developer/guides/) -- Includes conceptual information and code samples for all OpenTok features
+- [Developer guides](https://tokbox.com/developer/guides/) -- Includes conceptual information and code samples for all OpenTok features
